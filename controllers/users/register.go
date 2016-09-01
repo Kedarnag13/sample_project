@@ -1,18 +1,20 @@
 package users
 
 import (
-	"fmt"
+	"github.com/Kedarnag13/sample_project/models"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
+	_ "github.com/lib/pq"
 )
 
 type UsersController struct {
 	beego.Controller
 }
 
-type User struct {
-	Username             string `form:"username"`
-	Password             string `form:"password"`
-	PasswordConfirmation string `form:"password_confirmation"`
+func init() {
+	orm.RegisterDriver("postgres", orm.DRPostgres)
+	orm.RegisterDataBase("default", "postgres", "user=postgres password=password dbname=sample_project_development sslmode=disable")
+	orm.RunCommand()
 }
 
 func (u *UsersController) New() {
@@ -20,10 +22,23 @@ func (u *UsersController) New() {
 }
 
 func (u *UsersController) Post() {
-	user := User{}
+
+	o := orm.NewOrm()
+	o.Using("default")
+
+	user := models.Users{}
 	if err := u.ParseForm(&user); err != nil {
 		panic(err)
 	}
-	fmt.Printf("Username: %v", user.Username)
-	u.TplName = "users/post.tpl"
+
+	us := new(models.Users)
+	us.Username = user.Username
+	us.Password = user.Password
+	us.PasswordConfirmation = user.PasswordConfirmation
+
+	o.Insert(us)
+
+	u.Ctx.Redirect(302, "/users/new")
+	// fmt.Printf("Username: %v", user.Username)
+	// u.TplName = "users/post.tpl"
 }
