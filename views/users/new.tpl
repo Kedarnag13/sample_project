@@ -3,7 +3,7 @@
 <title>Sample Application</title>
 </head>
 <body>
-<form accept-charset="utf-8" role="form" class="form-horizontal" method="POST" action='{{urlfor "UsersController.Post"}}'>
+<form accept-charset="utf-8" role="form" class="form-horizontal" method="POST" action='{{urlfor "UsersController.Create"}}'>
   <div class="form-group">
     <label for="exampleInputUsername">Username</label>
     <input type="text" class="form-control" id="username" placeholder="Email" name="username">

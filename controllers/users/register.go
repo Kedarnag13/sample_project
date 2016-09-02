@@ -1,6 +1,7 @@
 package users
 
 import (
+	"fmt"
 	"github.com/Kedarnag13/sample_project/models"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -17,11 +18,27 @@ func init() {
 	orm.RunCommand()
 }
 
+func (u *UsersController) Index() {
+	o := orm.NewOrm()
+	var lists []orm.Params
+	num, err := o.QueryTable("users").Values(&lists)
+	if err == nil {
+		fmt.Printf("Result Nums: %d\n", num)
+		for _, row := range lists {
+			for range row {
+				fmt.Println(row)
+				u.Data["user"] = row
+			}
+		}
+	}
+	u.TplName = "users/index.tpl"
+}
+
 func (u *UsersController) New() {
 	u.TplName = "users/new.tpl"
 }
 
-func (u *UsersController) Post() {
+func (u *UsersController) Create() {
 
 	o := orm.NewOrm()
 	o.Using("default")
@@ -36,9 +53,12 @@ func (u *UsersController) Post() {
 	us.Password = user.Password
 	us.PasswordConfirmation = user.PasswordConfirmation
 
-	o.Insert(us)
+	success, err := o.Insert(us)
 
-	u.Ctx.Redirect(302, "/users/new")
-	// fmt.Printf("Username: %v", user.Username)
-	// u.TplName = "users/post.tpl"
+	if err != nil || success == 0 {
+		u.Ctx.Redirect(302, "/users/new")
+	} else {
+		u.Ctx.Redirect(302, "/users/index")
+	}
+
 }
