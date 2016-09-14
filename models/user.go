@@ -4,7 +4,7 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-type Users struct {
+type User struct {
 	Id                   int
 	Username             string `form:"username"`
 	Password             string `form:"password"`
@@ -12,5 +12,11 @@ type Users struct {
 }
 
 func init() {
-	orm.RegisterModel(new(Users))
+	orm.RegisterModel(new(User))
+}
+
+func FetchAllUsers() ([]*User, error) {
+	var users []*User
+	_, err := orm.NewOrm().QueryTable(new(User)).All(&users)
+	return users, err
 }

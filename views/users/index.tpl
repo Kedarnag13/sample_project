@@ -20,13 +20,13 @@
         <th>Password Confirmation</th>
       </tr>
     </thead>
-  {{range $key, $value := .user}}
+  {{range $user := .users}}
     <tbody>
       <tr>
-        <td>{{$value}}</td>
-        <td>{{$value}}</td>
-        <td>{{$value}}</td>
-        <td>{{$value}}</td>
+        <td>{{$user.Id}}</td>
+        <td>{{$user.Username}}</td>
+        <td>{{$user.Password}}</td>
+        <td>{{$user.PasswordConfirmation}}</td>
       </tr>
     </tbody>
   {{end}}

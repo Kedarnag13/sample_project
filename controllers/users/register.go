@@ -1,7 +1,6 @@
 package users
 
 import (
-	"fmt"
 	"github.com/Kedarnag13/sample_project/models"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -19,18 +18,11 @@ func init() {
 }
 
 func (u *UsersController) Index() {
-	o := orm.NewOrm()
-	var lists []orm.Params
-	num, err := o.QueryTable("users").Values(&lists)
-	if err == nil {
-		fmt.Printf("Result Nums: %d\n", num)
-		for _, row := range lists {
-			for range row {
-				fmt.Println(row)
-				u.Data["user"] = row
-			}
-		}
+	us, err := models.FetchAllUsers()
+	if err != nil {
+		panic(err)
 	}
+	u.Data["users"] = us
 	u.TplName = "users/index.tpl"
 }
 
@@ -43,12 +35,12 @@ func (u *UsersController) Create() {
 	o := orm.NewOrm()
 	o.Using("default")
 
-	user := models.Users{}
+	user := models.User{}
 	if err := u.ParseForm(&user); err != nil {
 		panic(err)
 	}
 
-	us := new(models.Users)
+	us := new(models.User)
 	us.Username = user.Username
 	us.Password = user.Password
 	us.PasswordConfirmation = user.PasswordConfirmation
